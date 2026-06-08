@@ -177,6 +177,9 @@ export const removebackground = async (req, res) => {
     console.log(req.file);
     console.log("PATH:", image.path);
     console.log("BUFFER EXISTS:", !!image.buffer);
+    console.log("FILE:", req.file);
+  console.log("PATH:", req.file?.path);
+  console.log("BUFFER:", !!req.file?.buffer);
 
     const userId = "test-user";
 
