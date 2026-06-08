@@ -191,7 +191,9 @@ export const removebackground = async (req, res) => {
         message: "Image is required",
       });
     }
-    const { secure_url } = await cloudinary.uploader.upload(image.path, {
+ const base64Image = `data:${image.mimetype};base64,${image.buffer.toString("base64")}`;
+
+const { secure_url } = await cloudinary.uploader.upload(base64Image, {
   transformation: [
     {
       effect: "background_removal",
