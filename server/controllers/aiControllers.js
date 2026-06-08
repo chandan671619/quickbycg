@@ -225,13 +225,14 @@ const { secure_url } = await cloudinary.uploader.upload(base64Image, {
 
 export const removeImageObject = async (req, res) => {
   try {
-    console.log("removebackground called");
+    console.log("removeImageObject called");
 
     const userId = "test-user";
     const { object } = req.body;
-    const  image  = req.file;
-    console.log(image);
-    console.log(object);
+    const image = req.file;
+
+    console.log("FILE:", image);
+    console.log("OBJECT:", object);
 
     if (!image) {
       return res.status(400).json({
@@ -239,49 +240,52 @@ export const removeImageObject = async (req, res) => {
         message: "Image is required",
       });
     }
-    const { public_id } = await cloudinary.uploader.upload(image.path);
-    
-    
-  const imageUrl = cloudinary.url(public_id, {
-  transformation: [
-    {
-      effect: `gen_remove:${object}`,
-    },
-  ],
-  resource_type: "image",
-});
-await sql`
-  INSERT INTO creations (user_id, prompt, content, type)
-  VALUES (
-    ${userId},
-    ${`Removed ${object} from image`},
-    ${imageUrl},
-    'image'
-  )
-`;
+
+    const base64Image = `data:${image.mimetype};base64,${image.buffer.toString("base64")}`;
+
+    const { public_id } = await cloudinary.uploader.upload(base64Image);
+
+    const imageUrl = cloudinary.url(public_id, {
+      transformation: [
+        {
+          effect: `gen_remove:${object}`,
+        },
+      ],
+      resource_type: "image",
+    });
+
+    await sql`
+      INSERT INTO creations (user_id, prompt, content, type)
+      VALUES (
+        ${userId},
+        ${`Removed ${object} from image`},
+        ${imageUrl},
+        'image'
+      )
+    `;
 
     return res.json({
       success: true,
       content: imageUrl,
     });
+
   } catch (error) {
-  console.log("Generate Image Error:");
+    console.log("Remove Object Error:", error);
 
-  if (error.response) {
-    console.log("Status:", error.response.status);
+    if (error.response) {
+      console.log("Status:", error.response.status);
+      console.log(
+        "Response:",
+        Buffer.from(error.response.data).toString()
+      );
+    }
 
-    console.log(
-      "Response:",
-      Buffer.from(error.response.data).toString()
-    );
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
-
-  res.status(500).json({
-    success: false,
-    message: error.message,
-  });
-}}
-
+};
 export const resumeReview = async (req, res) => {
   try {
     const userId = "test-user";
