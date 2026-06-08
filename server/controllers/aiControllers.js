@@ -174,17 +174,12 @@ export const generateimage = async (req, res) => {
 export const removebackground = async (req, res) => {
   try {
     console.log("removebackground called");
-    console.log(req.file);
-    console.log("PATH:", image.path);
-    console.log("BUFFER EXISTS:", !!image.buffer);
-    console.log("FILE:", req.file);
-    console.log("PATH:", req.file?.path);
-    console.log("BUFFER:", !!req.file?.buffer);
+console.log("FILE:", req.file);
+console.log("PATH:", req.file?.path);
+console.log("BUFFER:", !!req.file?.buffer);
 
-    const userId = "test-user";
-
-    const  image  = req.file;
-
+const userId = "test-user";
+const image = req.file;
     if (!image) {
       return res.status(400).json({
         success: false,
