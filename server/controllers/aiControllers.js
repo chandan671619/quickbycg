@@ -178,8 +178,8 @@ export const removebackground = async (req, res) => {
     console.log("PATH:", image.path);
     console.log("BUFFER EXISTS:", !!image.buffer);
     console.log("FILE:", req.file);
-  console.log("PATH:", req.file?.path);
-  console.log("BUFFER:", !!req.file?.buffer);
+    console.log("PATH:", req.file?.path);
+    console.log("BUFFER:", !!req.file?.buffer);
 
     const userId = "test-user";
 
@@ -305,7 +305,7 @@ export const resumeReview = async (req, res) => {
       });
     }
 
-    const dataBuffer = fs.readFileSync(resume.path);
+    const dataBuffer = resume.buffer;
 
     const pdfData = await pdf(dataBuffer);
 
@@ -350,7 +350,7 @@ ${pdfData.text}
       )
     `;
 
-    fs.unlinkSync(resume.path);
+  
 
     res.json({
       success: true,
